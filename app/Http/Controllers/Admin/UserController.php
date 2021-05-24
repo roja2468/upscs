@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\Package;
 use App\Transaction;
 use Session;
 use Auth;
 use Validator;
 use Redirect;
 use DataTables;
+
 
 class UserController extends Controller
 {
@@ -190,6 +192,7 @@ class UserController extends Controller
             'order_id' => ($Transactions->order_id) ? $Transactions->order_id : '-',
             'amount' => ($Transactions->amount) ? $Transactions->amount : '-',
         );
-        return response()->json(array('succsess'=>true,'response_data'=>$response_data));
+        $package_list = Package::all();
+        return response()->json(array('succsess'=>true,'response_data'=>$response_data,'package_list'=>$package_list));
     }
 }

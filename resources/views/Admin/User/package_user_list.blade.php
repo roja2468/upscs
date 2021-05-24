@@ -154,9 +154,10 @@ Users Packages
             success: function(response) {
                 if(response.succsess == true)
                 {
+                     $('#p').append("<option value='2'>2</option>")
                     Swal.fire({
                         title: "<i>"+check_null(response.response_data.user_name)+"</i>", 
-                        html: "<b>Mobile</b> : "+check_null(response.response_data.phone)+"</br><b>Package</b> : "+check_null(response.response_data.package_title)+"</br><b>Expire Date</b> : "+check_null(response.response_data.expiry_date)+"</br><b>Transaction Id</b> : "+check_null(response.response_data.transaction_id)+"</br><b>Order Id</b> : "+check_null(response.response_data.order_id)+"</br><b>Amount</b> : "+check_null(response.response_data.amount),  
+                        html: "<b>Mobile</b> : "+check_null(response.response_data.phone)+"</br><b>Package</b> : "+check_null(response.response_data.package_title)+"</br><b>Expire Date</b> : "+check_null(response.response_data.expiry_date)+"</br><b>Transaction Id</b> : "+check_null(response.response_data.transaction_id)+"</br><b>Order Id</b> : "+check_null(response.response_data.order_id)+"</br><b>Amount</b> : "+check_null(response.response_data.amount)+ "</br><b>Change Package : </b><select class='form-control' id='p'></select>",  
                         confirmButtonText: "Close", 
                     });
                     reload_table();

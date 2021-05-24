@@ -281,14 +281,14 @@ class AuthController extends Controller
         if($checkExistEmailStatus>0)
         {
             return response()->json([
-                'status' => '3',
+                'status' => '4',
                 'message' => 'Email Already Exists'
             ],200);
         }
         if($checkExistPhoneStatus>0)
         {
             return response()->json([
-                'status' => '3',
+                'status' => '1',
                 'message' => 'Mobile No Already Exists'
             ],200);
         }
@@ -602,7 +602,7 @@ class AuthController extends Controller
         else
         {
             return response()->json([
-                'status' => '3',
+                'status' => '1',
                 'message' => 'Not an active user...please register.'
             ],200);
         }
