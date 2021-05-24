@@ -20,6 +20,7 @@ use App\Traits\comman_fun;
 use App\Traits\send_sms;
 use Str;
 use Validator;
+use DB;
 
 class AuthController extends Controller
 {
@@ -252,6 +253,8 @@ class AuthController extends Controller
 
     public function Signup(Request $request)
     {
+
+
         $validator = Validator::make($request->all(), [
             'mobile_no' => 'required|numeric',
             'password' => 'required|required_with:password_confirmation|same:password_confirmation|min:8',
@@ -264,6 +267,31 @@ class AuthController extends Controller
                 'message' => $validator->messages()->toArray()
             ], 200);
         }
+        //$checkExistEmailPhoneStatus = User::where('email',$request->email)
+
+                                        //->count();
+         $checkExistEmailStatus = User::where([
+                                        'email' => $request->email,
+                                        'is_active' => 1
+                                        ])->count();
+         $checkExistPhoneStatus = User::where([
+                                        'phone' => $request->mobile_no,
+                                        'is_active' => 1
+                                        ])->count();
+        if($checkExistEmailStatus>0)
+        {
+            return response()->json([
+                'status' => '3',
+                'message' => 'Email Already Exists'
+            ],200);
+        }
+        if($checkExistPhoneStatus>0)
+        {
+            return response()->json([
+                'status' => '3',
+                'message' => 'Mobile No Already Exists'
+            ],200);
+        }
         $referral_code = $this->generateReferralNumber();
         $user = new User();
         // $user = new User()::where('phone',$request->mobile_no)->first();
@@ -274,14 +302,40 @@ class AuthController extends Controller
         //         'message' => 'Mobile No. Not exists.'
         //     ], 200);
         // }
-        $checkExistEmailCount = User::where('email',$request->email)->count();
-        if($checkExistEmailCount > 0)
-        {
-            return response()->json([
-                'status' => '3',
-                'message' => 'Email already exist.'
-            ], 200);
-        }
+        //$checkExistEmailCount = User::where('email',$request->email)->count();
+        //$checkExistPhone = User::where('phone',$request->mobile_no)->count();
+        //return $checkExistEmailCount;
+        //if($checkExistEmailCount > 0)
+        //{
+        //    $checkExistEmail = User::where('email',$request->email)->first();
+            // $checkExistEmail = User::whereIn('id', function ($query) {
+            //                     $query
+            //                     ->from('users')
+            //                     ->select(DB::raw('MAX(id) as id'))
+            //                     ->where('email',$request->)
+            //                     ->groupBy('email');
+            //                     })->get();
+        //    return $checkExistEmail;
+        //    if($checkExistEmail->is_active == 1)
+        //    {
+        //        return response()->json([
+        //            'status' => '3',
+        //            'message' => 'Email already exist.'
+        //        ], 200);
+        //    }
+        //}
+        //if($checkExistPhone > 0)
+        //{
+        //    $checkExistPhone = User::where('phone',$request->mobile_no)->first();
+        //    if($checkExistPhone->is_active == 1)
+        //    {
+        //        return response()->json([
+        //            'status' => '3',
+        //            'message' => 'Mobile Number already exist.'
+        //        ], 200);
+        //    }
+        //}
+
         $referral_user_id = '';
         // if($request->refer_no)
         // {
@@ -351,6 +405,7 @@ class AuthController extends Controller
             'message' => 'Registration has been done successfully.',
             'user' => $this->setData($user->only(['id','profile_pic','f_name','dob','gender','email','address','education','is_verify','referral_code','created_at','updated_at'])),
         ], 200);
+
     }
     public function logout(Request $request)
     {
@@ -522,6 +577,7 @@ class AuthController extends Controller
             ], 200);
         }
         $user = User::where('email', $request->email)->first();
+        //return $user;
         if (!$user)
         {
             return response()->json([
@@ -529,23 +585,34 @@ class AuthController extends Controller
                 'message' => 'Email ID Not exists.'
             ], 200);
         }
-        $token_password = $this->generateRandomPassword();
-        $user->password = bcrypt($token_password);
-      	$user->mpassword	=	$token_password;
-        $user->save();
-        $user->notify(
-            new PasswordResetRequest($token_password,$user->email)
-        );
-        return response()->json([
-            'status' => '3',
-            'message' => 'Successfully mail sent.'
-        ], 200);
+        if($user->is_active == 1)
+        {
+            $token_password = Str::random(6);
+            $user->password = bcrypt($token_password);
+      	    $user->mpassword	=	$token_password;
+            $user->save();
+            $user->notify(
+                new PasswordResetRequest($token_password,$user->email)
+            );
+            return response()->json([
+                'status' => '3',
+                'message' => 'Successfully mail sent.'
+            ], 200);
+        }
+        else
+        {
+            return response()->json([
+                'status' => '3',
+                'message' => 'Not an active user...please register.'
+            ],200);
+        }
     }
     public function ChangePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'current_password' => 'required|min:8',
-            'new_password' => 'required|required_with:password_confirmation|same:password_confirmation|min:8',
+            'new_password' => '
+            required|required_with:password_confirmation|same:password_confirmation|min:8',
         ]);
         if ($validator->fails()) {
             return response()->json([
