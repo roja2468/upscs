@@ -282,14 +282,14 @@ class AuthController extends Controller
         {
             return response()->json([
                 'status' => '3',
-                'message' => 'Email Already Exists!'
+                'message' => 'Email Already Exists'
             ],200);
         }
         if($checkExistPhoneStatus>0)
         {
             return response()->json([
                 'status' => '3',
-                'message' => 'Mobile No Already Exists!'
+                'message' => 'Mobile No Already Exists'
             ],200);
         }
         $referral_code = $this->generateReferralNumber();
