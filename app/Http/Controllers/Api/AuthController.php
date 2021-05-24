@@ -282,7 +282,7 @@ class AuthController extends Controller
         {
             return response()->json([
                 'status' => '3',
-                'message' => 'Email Already Exists'
+                'message' => 'Email Already Existss'
             ],200);
         }
         if($checkExistPhoneStatus>0)
