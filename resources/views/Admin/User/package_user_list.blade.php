@@ -72,7 +72,7 @@ Users Packages
                                     <th>No.</th>
                                     <th>User Name</th>
                                     <th>Gender</th>
-									<th>Phone Number</th>
+                                    <th>Phone Number</th>
                                     <th>Package</th>
                                     <th>Purchase Date</th>
                                     <th>Expire Date</th>
@@ -144,6 +144,7 @@ Users Packages
     function view_information(ele,id)
     {
         var error;
+        var toAppend = '';
         $(ele).html("<i class='fa fa-spinner fa-spin'></i>");
         $.ajax({
             type: "POST",
@@ -154,12 +155,48 @@ Users Packages
             success: function(response) {
                 if(response.succsess == true)
                 {
-                     $('#p').append("<option value='2'>2</option>")
+                     
                     Swal.fire({
                         title: "<i>"+check_null(response.response_data.user_name)+"</i>", 
-                        html: "<b>Mobile</b> : "+check_null(response.response_data.phone)+"</br><b>Package</b> : "+check_null(response.response_data.package_title)+"</br><b>Expire Date</b> : "+check_null(response.response_data.expiry_date)+"</br><b>Transaction Id</b> : "+check_null(response.response_data.transaction_id)+"</br><b>Order Id</b> : "+check_null(response.response_data.order_id)+"</br><b>Amount</b> : "+check_null(response.response_data.amount)+ "</br><b>Change Package : </b><select class='form-control' id='p'></select>",  
-                        confirmButtonText: "Close", 
+                        html: "<b>Mobile</b> : "+check_null(response.response_data.phone)+"</br><b>Package</b> : "+check_null(response.response_data.package_title)+"</br><b>Expire Date</b> : "+check_null(response.response_data.expiry_date)+"</br><b>Transaction Id</b> : "+check_null(response.response_data.transaction_id)+"</br><b>Order Id</b> : "+check_null(response.response_data.order_id)+"</br><b>Amount</b> : "+check_null(response.response_data.amount)+ '</br><button type="button" role="button" tabindex="0" class="SwalBtn1 customSwalBtn btn bt- warning">Update</button>&nbsp;<button type="button" role="button" tabindex="0" class="SwalBtn2 customSwalBtn2 btn bt- danger">Cancellation</button>&nbsp;',
+                        showCancelButton: true,
+                        showConfirmButton: false
+                    })
+  
+                    $(document).on('click', '.SwalBtn1', function() 
+                    {
+                        toAppend+='<option value="'+response.response_data.package_title+'">'+ response.response_data.package_title +'</option>>';
+                        //var time = $('.date').val(response.response_data.expiry_date);
+                        console.log(response.response_data.expiry_date);
+                       
+                        Swal.fire
+                        ({
+                            title: "Update Package",
+                            html: "<b>Change Package : </b><select class='form-control' id='populated'></select></br><b>Expiry Date : <input class='form-control' type='date' /></b></br></br><button type='button' role='button' class='btn bn-success update'>Update</button>&nbsp;<button type='button' role='button' class='btn bn-success cancel'>Cancel</button>"+            
+                                $.map(response.package_list, function(val, key) 
+                                {
+                                    
+                                    toAppend+='<option value="'+val.id+'">'+ val.title +'</option>>';
+                                }),
+                            showConfirmButton: false
+
+                         
+                        })
+                        $("#populated").append(toAppend);
+                        $(document).on('click', '.cancel', function() 
+                        {
+                            //alert('ok');
+                            swal.close();
+                        })
+                        $(document).on('click', '.update', function() 
+                        {
+                            alert('ok');
+                        
+                        })
+
                     });
+    
+                    
                     reload_table();
                 }
             },

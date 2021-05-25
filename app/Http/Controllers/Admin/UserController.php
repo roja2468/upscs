@@ -192,7 +192,7 @@ class UserController extends Controller
             'order_id' => ($Transactions->order_id) ? $Transactions->order_id : '-',
             'amount' => ($Transactions->amount) ? $Transactions->amount : '-',
         );
-        $package_list = Package::all();
+        $package_list = Package::where('title','!=',$response_data['package_title'])->get();
         return response()->json(array('succsess'=>true,'response_data'=>$response_data,'package_list'=>$package_list));
     }
 }
